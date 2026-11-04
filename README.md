@@ -12,7 +12,7 @@ python scaffold.py
 
 - [x] **1.** report_cuda_error
 - [x] **2.** device_upload
-- [ ] **3.** make_spiral
+- [x] **3.** make_spiral
 - [ ] **4.** matmul_kernel
 - [ ] **5.** add_bias_kernel
 - [ ] **6.** relu_kernel
