@@ -16,7 +16,7 @@ python scaffold.py
 - [x] **4.** matmul_kernel
 - [x] **5.** add_bias_kernel
 - [x] **6.** relu_kernel
-- [ ] **7.** softmax_rows_kernel
+- [x] **7.** softmax_rows_kernel
 - [ ] **8.** cross_entropy_kernel
 - [ ] **9.** init_mlp
 - [ ] **10.** alloc_workspace
