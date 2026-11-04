@@ -11,7 +11,7 @@ python scaffold.py
 ## Steps
 
 - [x] **1.** report_cuda_error
-- [ ] **2.** device_upload
+- [x] **2.** device_upload
 - [ ] **3.** make_spiral
 - [ ] **4.** matmul_kernel
 - [ ] **5.** add_bias_kernel
