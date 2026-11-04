@@ -15,7 +15,7 @@ python scaffold.py
 - [x] **3.** make_spiral
 - [x] **4.** matmul_kernel
 - [x] **5.** add_bias_kernel
-- [ ] **6.** relu_kernel
+- [x] **6.** relu_kernel
 - [ ] **7.** softmax_rows_kernel
 - [ ] **8.** cross_entropy_kernel
 - [ ] **9.** init_mlp
