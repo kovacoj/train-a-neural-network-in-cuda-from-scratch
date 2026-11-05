@@ -219,8 +219,25 @@ void launch_column_sum(const float* D, float* out, int rows, int cols) {
     column_sum_kernel<<<blocks, threads>>>(D, out, rows, cols);
 }
 
-# Step 16 - relu_backward_kernel (not yet solved)
-# TODO: implement
+# Step 16 - relu_backward_kernel
+#include <cuda_runtime.h>
+
+__global__ void relu_backward_kernel(float* dH, const float* H, int n) {
+    // TODO: dH[i] stays where H[i] > 0, else 0
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if (i < n) {
+        dH[i] = H[i] > 0 ? dH[i] : 0.0f;
+    }
+}
+
+void launch_relu_backward(float* dH, const float* H, int n) {
+    // TODO: 256 threads per block
+    int threads = 256;
+    int blocks = (n + threads - 1) / threads;
+
+    relu_backward_kernel<<<blocks, threads>>>(dH, H, n);
+}
 
 # Step 17 - backward_mlp (not yet solved)
 # TODO: implement

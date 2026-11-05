@@ -25,7 +25,7 @@ python scaffold.py
 - [ ] **13.** matmul_tn_kernel
 - [ ] **14.** matmul_nt_kernel
 - [x] **15.** column_sum_kernel
-- [ ] **16.** relu_backward_kernel
+- [x] **16.** relu_backward_kernel
 - [ ] **17.** backward_mlp
 - [x] **18.** sgd_update_kernel
 - [ ] **19.** train_step
