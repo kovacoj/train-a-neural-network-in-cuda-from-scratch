@@ -1,26 +1,22 @@
 #include "kernels.h"
-
 #include <cmath>
-
 #include <cuda_runtime.h>
-
 #include "cuda_utils.h"
 
 namespace {
-
-__global__ void matmul_kernel(const float* a, const float* b, float* output, int rows,
-                              int cols, int inner) {
-    const int col = blockIdx.x * blockDim.x + threadIdx.x;
-    const int row = blockIdx.y * blockDim.y + threadIdx.y;
-    if (row >= rows || col >= cols) {
-        return;
-    }
-
-    float sum = 0.0f;
-    for (int index = 0; index < inner; ++index) {
-        sum += a[row * inner + index] * b[index * cols + col];
-    }
-    output[row * cols + col] = sum;
+  __global__ void matmul_kernel(const float* a, const float* b, float* output, int rows,
+                                int cols, int inner) {
+      const int col = blockIdx.x * blockDim.x + threadIdx.x;
+      const int row = blockIdx.y * blockDim.y + threadIdx.y;
+      if (row >= rows || col >= cols) {
+          return;
+      }
+  
+      float sum = 0.0f;
+      for (int index = 0; index < inner; ++index) {
+          sum += a[row * inner + index] * b[index * cols + col];
+      }
+      output[row * cols + col] = sum;
 }
 
 __global__ void add_bias_kernel(float* values, const float* bias, int count, int cols) {
@@ -172,7 +168,6 @@ __global__ void accuracy_kernel(const float* probabilities, const int* labels, i
         atomicAdd(correct, 1);
     }
 }
-
 }  // namespace
 
 void launch_matmul(const float* a, const float* b, float* output, int rows, int cols,
