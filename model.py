@@ -202,8 +202,25 @@ void launch_softmax_rows(const float* logits, float* probs, int rows, int cols) 
 # Step 17 - backward_mlp (not yet solved)
 # TODO: implement
 
-# Step 18 - sgd_update_kernel (not yet solved)
-# TODO: implement
+# Step 18 - sgd_update_kernel
+#include <cuda_runtime.h>
+
+__global__ void sgd_update_kernel(float* param, const float* grad, float lr, int n) {
+    // TODO: param[i] -= lr * grad[i]
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if  (i < n) {
+        param[i] -= lr * grad[i];
+    }
+}
+
+void launch_sgd_update(float* param, const float* grad, float lr, int n) {
+    // TODO: 256 threads per block
+    int threads = 256;
+    int blocks = (n + threads - 1) / threads;
+
+    sgd_update_kernel<<<blocks, threads>>>(param, grad, lr, n);
+}
 
 # Step 19 - train_step (not yet solved)
 # TODO: implement

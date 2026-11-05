@@ -27,7 +27,7 @@ python scaffold.py
 - [ ] **15.** column_sum_kernel
 - [ ] **16.** relu_backward_kernel
 - [ ] **17.** backward_mlp
-- [ ] **18.** sgd_update_kernel
+- [x] **18.** sgd_update_kernel
 - [ ] **19.** train_step
 - [ ] **20.** train_mlp
 - [ ] **21.** accuracy_kernel
