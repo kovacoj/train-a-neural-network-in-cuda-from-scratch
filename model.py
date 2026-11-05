@@ -446,8 +446,20 @@ void launch_relu_backward(float* dH, const float* H, int n) {
     relu_backward_kernel<<<blocks, threads>>>(dH, H, n);
 }
 
-# Step 17 - backward_mlp (not yet solved)
-# TODO: implement
+# Step 17 - backward_mlp
+void backward_mlp(const MLP& m, const float* X, const int* labels, int batch, Workspace& w) {
+    // TODO: dZ2; dW2 = H^T dZ2; db2 = colsum(dZ2); dH = dZ2 W2^T; relu mask; dW1 = X^T dH; db1 = colsum(dH)
+    
+    launch_softmax_ce_grad(w.P, labels, w.dZ2, batch, m.out_dim);
+    launch_matmul_tn(w.H, w.dZ2, w.dW2, batch, m.hidden, m.out_dim);
+    launch_column_sum(w.dZ2, w.db2, batch, m.out_dim);
+    
+    launch_matmul_nt(w.dZ2, m.W2, w.dH, batch, m.out_dim, m.hidden);
+    launch_relu_backward(w.dH, w.H, batch * m.hidden);
+
+    launch_matmul_tn(X, w.dH, w.dW1, batch, m.in_dim, m.hidden);
+    launch_column_sum(w.dH, w.db1, batch, m.hidden);
+}
 
 # Step 18 - sgd_update_kernel
 #include <cuda_runtime.h>
