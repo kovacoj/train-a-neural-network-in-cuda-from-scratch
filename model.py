@@ -375,8 +375,30 @@ void launch_matmul_tn(const float* A, const float* D, float* C, int R, int I, in
     matmul_tn_kernel<<<block, threads>>>(A, D, C, R, I, J);    
 }
 
-# Step 14 - matmul_nt_kernel (not yet solved)
-# TODO: implement
+# Step 14 - matmul_nt_kernel
+#include <cuda_runtime.h>
+
+__global__ void matmul_nt_kernel(const float* D, const float* W, float* C, int R, int J, int I) {
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (row < R && col < I) {
+        float sum = 0.0f;
+
+        for (int j = 0; j < J; j++) {
+            sum += D[row * J + j] * W[col * J + j];
+        }
+
+        C[row * I + col] = sum;
+    }
+}
+
+void launch_matmul_nt(const float* D, const float* W, float* C, int R, int J, int I) {
+    dim3 threads(16, 16);
+    dim3 blocks((I + 15) / 16, (R + 15) / 16);
+
+    matmul_nt_kernel<<<blocks, threads>>>(D, W, C, R, J, I);
+}
 
 # Step 15 - column_sum_kernel
 #include <cuda_runtime.h>
