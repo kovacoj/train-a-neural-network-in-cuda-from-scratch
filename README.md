@@ -21,7 +21,7 @@ python scaffold.py
 - [x] **9.** init_mlp
 - [x] **10.** alloc_workspace
 - [x] **11.** forward_mlp
-- [ ] **12.** softmax_ce_grad_kernel
+- [x] **12.** softmax_ce_grad_kernel
 - [ ] **13.** matmul_tn_kernel
 - [ ] **14.** matmul_nt_kernel
 - [x] **15.** column_sum_kernel

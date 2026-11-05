@@ -326,8 +326,29 @@ void forward_mlp(const MLP& m, const float* X, int batch, Workspace& w) {
     launch_softmax_rows(w.P, w.P, batch, m.out_dim);
 }
 
-# Step 12 - softmax_ce_grad_kernel (not yet solved)
-# TODO: implement
+# Step 12 - softmax_ce_grad_kernel
+#include <cuda_runtime.h>
+
+__global__ void softmax_ce_grad_kernel(const float* P, const int* labels, float* dZ, int rows, int cols) {
+    // TODO: dZ[r][j] = (P[r][j] - [j == labels[r]]) / rows
+    int idx = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if (idx < rows * cols) {
+        int r = idx / cols;
+        int j = idx % cols;
+
+        dZ[idx] = (P[idx] - (j == labels[r] ? 1.0f : 0.0f)) / rows;
+    }
+
+}
+
+void launch_softmax_ce_grad(const float* P, const int* labels, float* dZ, int rows, int cols) {
+    // TODO: 256 threads per block over rows * cols
+    int threads = 256;
+    int blocks = (rows * cols + threads - 1) / threads;
+
+    softmax_ce_grad_kernel<<<blocks, threads>>>(P, labels, dZ, rows, cols);
+}
 
 # Step 13 - matmul_tn_kernel (not yet solved)
 # TODO: implement
