@@ -314,8 +314,17 @@ void free_workspace(Workspace& w) {
     w.H = w.P = w.dZ2 = w.dH = w.dW1 = w.db1 = w.dW2 = w.db2 = nullptr;
 }
 
-# Step 11 - forward_mlp (not yet solved)
-# TODO: implement
+# Step 11 - forward_mlp
+void forward_mlp(const MLP& m, const float* X, int batch, Workspace& w) {
+    // TODO: H = relu(X @ W1 + b1); P = softmax(H @ W2 + b2), using the earlier launchers
+    launch_matmul(X, m.W1, w.H, batch, m.hidden, m.in_dim);
+    launch_add_bias(w.H, m.b1, batch, m.hidden);
+    launch_relu(w.H, batch * m.hidden);
+
+    launch_matmul(w.H, m.W2, w.P, batch, m.out_dim, m.hidden);
+    launch_add_bias(w.P, m.b2, batch, m.out_dim);
+    launch_softmax_rows(w.P, w.P, batch, m.out_dim);
+}
 
 # Step 12 - softmax_ce_grad_kernel (not yet solved)
 # TODO: implement

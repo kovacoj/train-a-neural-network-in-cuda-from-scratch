@@ -20,7 +20,7 @@ python scaffold.py
 - [x] **8.** cross_entropy_kernel
 - [x] **9.** init_mlp
 - [x] **10.** alloc_workspace
-- [ ] **11.** forward_mlp
+- [x] **11.** forward_mlp
 - [ ] **12.** softmax_ce_grad_kernel
 - [ ] **13.** matmul_tn_kernel
 - [ ] **14.** matmul_nt_kernel
