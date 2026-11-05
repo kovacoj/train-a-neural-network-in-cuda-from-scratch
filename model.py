@@ -214,7 +214,7 @@ __global__ void column_sum_kernel(const float* D, float* out, int rows, int cols
 void launch_column_sum(const float* D, float* out, int rows, int cols) {
     // TODO: 128 threads per block, one per column
     int threads = 128;
-    int blocks = (rows * cols + threads - 1) / threads;
+    int blocks = (cols + threads - 1) / threads;
 
     column_sum_kernel<<<blocks, threads>>>(D, out, rows, cols);
 }
