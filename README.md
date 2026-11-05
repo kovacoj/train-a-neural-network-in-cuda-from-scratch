@@ -31,7 +31,7 @@ python scaffold.py
 - [x] **19.** train_step
 - [x] **20.** train_mlp
 - [x] **21.** accuracy_kernel
-- [ ] **22.** time_train_step_ms
+- [x] **22.** time_train_step_ms
 
 ---
 
