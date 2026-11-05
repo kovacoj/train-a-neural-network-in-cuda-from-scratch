@@ -30,7 +30,7 @@ python scaffold.py
 - [x] **18.** sgd_update_kernel
 - [x] **19.** train_step
 - [x] **20.** train_mlp
-- [ ] **21.** accuracy_kernel
+- [x] **21.** accuracy_kernel
 - [ ] **22.** time_train_step_ms
 
 ---

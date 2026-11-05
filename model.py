@@ -513,8 +513,41 @@ float train_mlp(MLP& m, Workspace& w, const float* X, const int* labels, int bat
     return loss;
 }
 
-# Step 21 - accuracy_kernel (not yet solved)
-# TODO: implement
+# Step 21 - accuracy_kernel
+#include <cuda_runtime.h>
+
+__global__ void accuracy_kernel(const float* probs, const int* labels, int rows, int cols, int* correct) {
+    // TODO: one thread per row: argmax (first max wins); atomicAdd(correct, 1) when it equals the label
+    int r = blockDim.x * blockIdx.x + threadIdx.x;
+    if (r < rows) {
+        int argmax = 0; float max = probs[r * cols];
+        for (int c=1; c < cols; c++) {
+            if (max < probs[r * cols + c]) {
+                max = probs[r * cols + c];
+                argmax = c;
+            }
+        }
+        if (argmax == labels[r]) {
+            atomicAdd(correct, 1);
+        }
+    }
+}
+
+float accuracy(const float* probs, const int* labels, int rows, int cols) {
+    // TODO: zeroed device int, launch, copy back, free, return count / rows
+    int* dcount = nullptr; int count;
+    cudaMalloc(&dcount, sizeof(int));
+    cudaMemset(dcount, 0, sizeof(int));
+
+    int threads = 256;
+    int blocks = (rows + threads - 1) / threads;
+
+    accuracy_kernel<<<blocks, threads>>>(probs, labels, rows, cols, dcount);
+    cudaMemcpy(&count, dcount, sizeof(int), cudaMemcpyDeviceToHost);
+    cudaFree(dcount);
+
+    return count / (float)rows;
+}
 
 # Step 22 - time_train_step_ms (not yet solved)
 # TODO: implement
