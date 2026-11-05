@@ -193,8 +193,31 @@ void launch_softmax_rows(const float* logits, float* probs, int rows, int cols) 
 # Step 14 - matmul_nt_kernel (not yet solved)
 # TODO: implement
 
-# Step 15 - column_sum_kernel (not yet solved)
-# TODO: implement
+# Step 15 - column_sum_kernel
+#include <cuda_runtime.h>
+
+__global__ void column_sum_kernel(const float* D, float* out, int rows, int cols) {
+    // TODO: thread c sums column c over all rows
+    int c = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (c < cols) {
+        float sum = 0.0f;
+
+        for (int r=0; r < rows; r++) {
+            sum += D[r * cols + c];
+        }
+
+        out[c] = sum;
+    }
+}
+
+void launch_column_sum(const float* D, float* out, int rows, int cols) {
+    // TODO: 128 threads per block, one per column
+    int threads = 128;
+    int blocks = (rows * cols + threads - 1) / threads;
+
+    column_sum_kernel<<<blocks, threads>>>(D, out, rows, cols);
+}
 
 # Step 16 - relu_backward_kernel (not yet solved)
 # TODO: implement
