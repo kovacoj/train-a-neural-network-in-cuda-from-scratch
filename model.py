@@ -172,8 +172,49 @@ void launch_softmax_rows(const float* logits, float* probs, int rows, int cols) 
     softmax_rows_kernel<<<blocks, threads>>>(logits, probs, rows, cols);
 }
 
-# Step 8 - cross_entropy_kernel (not yet solved)
-# TODO: implement
+# Step 8 - cross_entropy_kernel
+#include <cmath>
+#include <cuda_runtime.h>
+
+__global__ void cross_entropy_kernel(const float* probs, const int* labels, int rows, int cols, float* total) {
+    // TODO: per-thread -log(max(p[label], 1e-12)), shared-memory tree sum of 256 values,
+    // thread 0 atomicAdds the block sum into *total
+    __shared__ float sums[256];
+
+    int tid = threadIdx.x;
+    int r = blockIdx.x * blockDim.x + tid;
+
+    sums[tid] = r >= rows ? 0.0f : -logf(fmaxf(probs[r * cols + labels[r]], 1e-12f));
+
+    __syncthreads();
+
+    for (int diff=128; diff > 0; diff >>= 1) {
+        if (tid < diff) {
+            sums[tid] += sums[tid + diff];
+        }
+        __syncthreads();
+    }
+
+    if (tid == 0) {
+        atomicAdd(total, sums[0]);
+    }
+}
+
+float cross_entropy_loss(const float* probs, const int* labels, int rows, int cols) {
+    // TODO: zeroed device float, launch 256-thread blocks, copy back, free, return total / rows
+    float* dtotal = nullptr; float total;
+    cudaMalloc(&dtotal, sizeof(float));
+    cudaMemset(dtotal, 0, sizeof(float));
+    
+    int threads = 256;
+    int blocks = (rows + threads - 1) / threads;
+
+    cross_entropy_kernel<<<blocks, threads>>>(probs, labels, rows, cols, dtotal);
+    cudaMemcpy(&total, dtotal, sizeof(float), cudaMemcpyDeviceToHost);
+    cudaFree(dtotal);
+
+    return total / rows;
+}
 
 # Step 9 - init_mlp (not yet solved)
 # TODO: implement
