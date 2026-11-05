@@ -265,8 +265,54 @@ void free_mlp(MLP& m) {
     m.W1 = m.W2 = m.b1 = m.b2 = nullptr;
 }
 
-# Step 10 - alloc_workspace (not yet solved)
-# TODO: implement
+# Step 10 - alloc_workspace
+#include <cuda_runtime.h>
+
+struct Workspace {
+    int batch;
+    float *H, *P;                    // forward: hidden activations, probabilities
+    float *dZ2, *dH;                 // backward: gradients w.r.t. logits and hidden
+    float *dW1, *db1, *dW2, *db2;    // parameter gradients
+};
+
+Workspace alloc_workspace(const MLP& m, int batch) {
+    Workspace w = {batch, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    // TODO: cudaMalloc and cudaMemset all eight buffers with the sizes in the description
+    
+    cudaMalloc(&w.H, sizeof(float) * batch * m.hidden);
+    cudaMemset(w.H, 0.0f, sizeof(float) * batch * m.hidden);
+
+    cudaMalloc(&w.dH, sizeof(float) * batch * m.hidden);
+    cudaMemset(w.dH, 0.0f, sizeof(float) * batch * m.hidden);
+    
+    cudaMalloc(&w.P, sizeof(float) * batch * m.out_dim);
+    cudaMemset(w.P, 0.0f, sizeof(float) * batch * m.out_dim);
+
+    cudaMalloc(&w.dZ2, sizeof(float) * batch * m.out_dim);
+    cudaMemset(w.dZ2, 0.0f, sizeof(float) * batch * m.out_dim);
+
+    cudaMalloc(&w.dW1, sizeof(float) * m.in_dim * m.hidden);
+    cudaMemset(w.dW1, 0.0f, sizeof(float) * m.in_dim * m.hidden);
+
+    cudaMalloc(&w.db1, sizeof(float) * m.hidden);
+    cudaMemset(w.db1, 0.0f, sizeof(float) * m.hidden);
+
+    cudaMalloc(&w.dW2, sizeof(float) * m.hidden * m.out_dim);
+    cudaMemset(w.dW2, 0.0f, sizeof(float) * m.hidden * m.out_dim);
+
+    cudaMalloc(&w.db2, sizeof(float) * m.out_dim);
+    cudaMemset(w.db2, 0.0f, sizeof(float) * m.out_dim);
+
+    return w;
+}
+
+void free_workspace(Workspace& w) {
+    // TODO: cudaFree all eight, set them to nullptr
+    cudaFree(w.H); cudaFree(w.P); cudaFree(w.dZ2); cudaFree(w.dH);
+    cudaFree(w.dW1); cudaFree(w.db1); cudaFree(w.dW2); cudaFree(w.db2);
+
+    w.H = w.P = w.dZ2 = w.dH = w.dW1 = w.db1 = w.dW2 = w.db2 = nullptr;
+}
 
 # Step 11 - forward_mlp (not yet solved)
 # TODO: implement
