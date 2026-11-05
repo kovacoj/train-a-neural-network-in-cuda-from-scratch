@@ -350,8 +350,30 @@ void launch_softmax_ce_grad(const float* P, const int* labels, float* dZ, int ro
     softmax_ce_grad_kernel<<<blocks, threads>>>(P, labels, dZ, rows, cols);
 }
 
-# Step 13 - matmul_tn_kernel (not yet solved)
-# TODO: implement
+# Step 13 - matmul_tn_kernel
+#include <cuda_runtime.h>
+
+__global__ void matmul_tn_kernel(const float* A, const float* D, float* C, int R, int I, int J) {
+    // TODO: C[i][j] = sum_r A[r][i] * D[r][j]; j from x, i from y, guard
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (row < I && col < J) {
+        float sum = 0.0f;
+        for (int k=0; k < R; k++) {
+            sum += A[k * I + row] * D[k * J + col];
+        }
+        C[row * J + col] = sum;
+    }
+}
+
+void launch_matmul_tn(const float* A, const float* D, float* C, int R, int I, int J) {
+    // TODO: 16 x 16 blocks covering J columns and I rows
+    dim3 threads(16, 16);
+    dim3 block((J + 15) / 16, (I + 15) / 16);
+
+    matmul_tn_kernel<<<block, threads>>>(A, D, C, R, I, J);    
+}
 
 # Step 14 - matmul_nt_kernel (not yet solved)
 # TODO: implement

@@ -22,7 +22,7 @@ python scaffold.py
 - [x] **10.** alloc_workspace
 - [x] **11.** forward_mlp
 - [x] **12.** softmax_ce_grad_kernel
-- [ ] **13.** matmul_tn_kernel
+- [x] **13.** matmul_tn_kernel
 - [ ] **14.** matmul_nt_kernel
 - [x] **15.** column_sum_kernel
 - [x] **16.** relu_backward_kernel
