@@ -178,4 +178,3 @@ int main() {
     free_mlp(m);
     return 0;
 }
-
