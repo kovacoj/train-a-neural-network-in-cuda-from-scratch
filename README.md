@@ -18,7 +18,7 @@ python scaffold.py
 - [x] **6.** relu_kernel
 - [x] **7.** softmax_rows_kernel
 - [x] **8.** cross_entropy_kernel
-- [ ] **9.** init_mlp
+- [x] **9.** init_mlp
 - [ ] **10.** alloc_workspace
 - [ ] **11.** forward_mlp
 - [ ] **12.** softmax_ce_grad_kernel

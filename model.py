@@ -216,8 +216,54 @@ float cross_entropy_loss(const float* probs, const int* labels, int rows, int co
     return total / rows;
 }
 
-# Step 9 - init_mlp (not yet solved)
-# TODO: implement
+# Step 9 - init_mlp
+#include <cmath>
+#include <vector>
+#include <cuda_runtime.h>
+
+struct MLP {
+    int in_dim, hidden, out_dim;
+    float *W1, *b1, *W2, *b2;   // device pointers
+};
+
+MLP init_mlp(int in_dim, int hidden, int out_dim, unsigned seed) {
+    MLP m = {in_dim, hidden, out_dim, nullptr, nullptr, nullptr, nullptr};
+    // TODO: one generator seeded with `seed`; W1 then W2, (2u - 1) * sqrt(6 / fan_in); zero biases;
+    // upload all four with device_upload
+    unsigned state = seed;
+    float* W1 = (float*)malloc(in_dim * hidden * sizeof(float));
+    float* W2 = (float*)malloc(hidden * out_dim * sizeof(float));
+    float* b1 = (float*)malloc(hidden * sizeof(float));
+    float* b2 = (float*)malloc(out_dim * sizeof(float));
+
+    for (int col=0; col < hidden; col++) b1[col] = 0.0f;
+    for (int col=0; col < out_dim; col++) b2[col] = 0.0f;
+
+    for (int row=0; row < in_dim; row++) {
+        for (int col=0; col < hidden; col++) {
+            W1[row * hidden + col] = (2 * lcg_uniform(&state) - 1) * sqrtf(6.0f / in_dim);
+        }
+    }
+
+    for (int row=0; row < hidden; row++) {
+        for (int col=0; col < out_dim; col++) {
+            W2[row * out_dim + col] = (2 * lcg_uniform(&state) - 1) * sqrtf(6.0f / hidden);
+        }
+    }
+
+    m.W1 = device_upload(W1, in_dim * hidden); free(W1);
+    m.b1 = device_upload(b1, hidden); free(b1);
+    m.W2 = device_upload(W2, hidden * out_dim); free(W2);
+    m.b2 = device_upload(b2, out_dim); free(b2);
+
+    return m;
+}
+
+void free_mlp(MLP& m) {
+    // TODO: cudaFree the four arrays, set them to nullptr
+    cudaFree(m.W1); cudaFree(m.W2); cudaFree(m.b1); cudaFree(m.b2);
+    m.W1 = m.W2 = m.b1 = m.b2 = nullptr;
+}
 
 # Step 10 - alloc_workspace (not yet solved)
 # TODO: implement
