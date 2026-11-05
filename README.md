@@ -28,7 +28,7 @@ python scaffold.py
 - [x] **16.** relu_backward_kernel
 - [x] **17.** backward_mlp
 - [x] **18.** sgd_update_kernel
-- [ ] **19.** train_step
+- [x] **19.** train_step
 - [ ] **20.** train_mlp
 - [ ] **21.** accuracy_kernel
 - [ ] **22.** time_train_step_ms
